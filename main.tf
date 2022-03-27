@@ -4,7 +4,7 @@ data "external" "wfh_public_ip" {
 
 resource "aws_instance" "k8s-lab" {
   ami             = "ami-0c635ee4f691a2310"
-  instance_type   = lookup(var.ec2_type, terraform.workspace, "t3.nano")
+  instance_type   = lookup(var.ec2_type, terraform.workspace, "t3a.nano")
   key_name        = "k8s-beg"
   security_groups = [aws_security_group.allow_ssh.name]
 
@@ -14,6 +14,7 @@ resource "aws_instance" "k8s-lab" {
       "curl -LO \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\"",
       "echo ----- \"$(<kubectl.sha256)  kubectl\" | sha256sum --check",
       "sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl",
+      "rm ~/kubectl",
       "sudo yum install conntrack docker -y",
       "echo ----- Adding $USER to the docker group",
       "sudo usermod -aG docker $USER",
@@ -24,11 +25,12 @@ resource "aws_instance" "k8s-lab" {
       "sudo systemctl enable docker",
       "curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64",
       "sudo install minikube /usr/local/bin/minikube",
+      "rm ~/minikube",
       "minikube config set driver docker",
       "echo ----- minikube scheduled to start in 60 seconds",
-      " echo \"/usr/local/bin/minikube start --memory=1800mb\" | at now + 1 minute", #adding delay...because of usermod above
+      "echo \"/usr/local/bin/minikube start --network-plugin=cni --cni=calico\" | at now + 1 minute", #adding delay...because of usermod above
       "echo ----- Adding kubectl completion to bashrc in 120 seconds",
-      " echo \"echo 'source <(kubectl completion bash)' >>~/.bashrc\" | at now + 2 minute"
+      "echo \"echo 'source <(kubectl completion bash)' >>~/.bashrc\" | at now + 2 minute"
     ]
 
     connection {
