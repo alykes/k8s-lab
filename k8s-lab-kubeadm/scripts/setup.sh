@@ -34,8 +34,17 @@ echo ---- Docker Info ----
 sudo docker info | grep -i cgroup
 echo ---- Docker Info ----
 
-sudo apt install -y etcd-client
+echo ---Installing etcdctl---
+ETCD_VER=v3.4.18
+GOOGLE_URL=https://storage.googleapis.com/etcd
+DOWNLOAD_URL=${GOOGLE_URL}
+mkdir -p /tmp/etcd-download-test
+curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+sudo tar xzvf /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz -C /tmp/etcd-download-test --strip-components=1
+rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+sudo mv /tmp/etcd-download-test/etcdctl /usr/bin
 etcdctl --version
+echo ---Finished installing etcdctl---
 
 sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl
@@ -47,7 +56,9 @@ sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 
 # add ```--cgroup-driver=cgroupfs``` to ```/etc/systemd/system/kubelet.service/10-kubeadm.conf```
-
+echo ------------------------------------
+echo ------- Initialising kubeadm -------
+echo ------------------------------------
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16 # --node-name=controlplane
 
 mkdir -p $HOME/.kube
