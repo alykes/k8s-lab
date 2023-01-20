@@ -1,4 +1,3 @@
-#!/bin/bash
 swapoff -a
 
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
