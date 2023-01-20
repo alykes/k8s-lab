@@ -5,7 +5,7 @@ data "external" "wfh_public_ip" {
 resource "aws_instance" "k8s-lab" {
   ami             = "ami-0b7dcd6e6fd797935"
   instance_type   = lookup(var.ec2_type, terraform.workspace, "t3a.nano")
-  key_name        = "k8s-lab"
+  key_name        = "kp-ango-k8s-lab"
   security_groups = [aws_security_group.allow_ssh.name]
 
   provisioner "remote-exec" {
@@ -16,7 +16,7 @@ resource "aws_instance" "k8s-lab" {
       type        = "ssh"
       host        = self.public_ip
       user        = "ubuntu"
-      private_key = file("../../keys/k8s-lab.pem")
+      private_key = file("../../.keys/cka-keys/kp-ango-k8s-lab.pem")
     }
 
     on_failure = continue
