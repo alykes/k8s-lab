@@ -1,3 +1,4 @@
+#!/bin/bash
 swapoff -a
 
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
@@ -55,7 +56,7 @@ sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 
-# add ```--cgroup-driver=cgroupfs``` to ```/etc/systemd/system/kubelet.service/10-kubeadm.conf```
+# add "--cgroup-driver=cgroupfs" to "/etc/systemd/system/kubelet.service/10-kubeadm.conf"
 echo ------------------------------------
 echo ------- Initialising kubeadm -------
 echo ------------------------------------
