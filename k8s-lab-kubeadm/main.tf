@@ -1,5 +1,5 @@
 data "external" "wfh_public_ip" {
-  program = ["cmd", "/C", "curl -s https://ipinfo.io/json"]
+  program = ["cmd", "/C", "curl -s https://ipinfo.io/json --ssl-no-revoke"]
 }
 
 resource "aws_instance" "k8s-lab" {
